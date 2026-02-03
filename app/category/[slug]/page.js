@@ -4,67 +4,147 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { use } from 'react'
 
+// Real DOJ document data organized by category
 const categoryData = {
   'court-records': {
     title: 'Court Records',
     icon: '⚖️',
-    description: 'Legal filings, depositions, and judicial documents from various Epstein-related cases',
+    description: 'Legal filings, depositions, and judicial documents from Epstein-related cases. Many documents contain pre-existing redactions with additional DOJ redactions for victim protection.',
     source: 'https://www.justice.gov/epstein/court-records',
-    documents: [
-      { id: 'cr-001', name: 'Deposition of Juan Alessi', date: '2009-12-14', pages: 89, mentions: ['Epstein', 'Maxwell'], type: 'Deposition' },
-      { id: 'cr-002', name: 'Virginia Giuffre vs. Ghislaine Maxwell - Case Filing', date: '2015-09-21', pages: 23, mentions: ['Giuffre', 'Maxwell', 'Epstein'], type: 'Filing' },
-      { id: 'cr-003', name: 'Palm Beach Police Report', date: '2005-03-15', pages: 12, mentions: ['Epstein'], type: 'Police Report' },
-      { id: 'cr-004', name: 'Victim Interview Transcript #14', date: '2008-06-22', pages: 45, mentions: ['Epstein', 'Maxwell', 'Brunel'], type: 'Transcript' },
-      { id: 'cr-005', name: 'Non-Prosecution Agreement', date: '2007-09-24', pages: 8, mentions: ['Epstein'], type: 'Agreement' },
-    ]
+    cases: [
+      {
+        name: 'Giuffre v. Maxwell, No. 1:15-cv-07433 (S.D.N.Y. 2015)',
+        description: 'Defamation lawsuit by Virginia Giuffre against Ghislaine Maxwell',
+        documents: [
+          { id: 'giuffre-maxwell-001', name: 'Complaint', num: '001', pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/Giuffre%20v.%20Maxwell,%20No.%20115-cv-07433%20(S.D.N.Y.%202015)/001.pdf' },
+          { id: 'giuffre-maxwell-034', name: 'Maxwell Deposition', num: '034', pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/Giuffre%20v.%20Maxwell,%20No.%20115-cv-07433%20(S.D.N.Y.%202015)/034.pdf' },
+        ],
+        totalDocs: 200,
+        dojLink: 'https://www.justice.gov/epstein/court-records/giuffre-v-maxwell-no-115-cv-07433-sdny-2015',
+      },
+      {
+        name: 'United States v. Maxwell, No. 1:20-cr-00330 (S.D.N.Y. 2020)',
+        description: 'Federal criminal prosecution of Ghislaine Maxwell',
+        documents: [
+          { id: 'usa-maxwell-001', name: 'Indictment', num: '001', pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/United%20States%20v.%20Maxwell,%20No.%20120-cr-00330%20(S.D.N.Y.%202020)/001.pdf' },
+        ],
+        totalDocs: 150,
+        dojLink: 'https://www.justice.gov/epstein/court-records',
+      },
+      {
+        name: 'Doe No. 3 v. Epstein, No. 9:08-cv-80232 (S.D. Fla. 2008)',
+        description: 'Early civil case against Epstein',
+        documents: [
+          { id: 'doe-3-001', name: 'Complaint', num: '001', pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/Doe%20No.%203%20v.%20Epstein,%20No.%20908-cv-80232%20(S.D.%20Fla.%202008)/001.pdf' },
+        ],
+        totalDocs: 100,
+        dojLink: 'https://www.justice.gov/epstein/court-records/doe-no-3-v-epstein-no-908-cv-80232-sd-fla-2008',
+      },
+      {
+        name: 'Bryant v. Indyke, No. 1:19-cv-10479 (S.D.N.Y. 2019)',
+        description: 'Lawsuit against Epstein estate executors',
+        documents: [
+          { id: 'bryant-001', name: 'Filing 001', num: '001', pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/Bryant%20v.%20Indyke,%20No.%20119-cv-10479%20(S.D.N.Y.%202019)/001.pdf' },
+        ],
+        totalDocs: 54,
+        dojLink: 'https://www.justice.gov/epstein/court-records',
+      },
+    ],
   },
   'doj-disclosures': {
     title: 'DOJ Disclosures',
     icon: '📋',
-    description: 'Documents released under the Epstein Files Transparency Act (H.R. 4405)',
+    description: 'Documents released under the Epstein Files Transparency Act (H.R. 4405) and other DOJ releases including declassified files, memoranda, and the Maxwell Proffer.',
     source: 'https://www.justice.gov/epstein/doj-disclosures',
-    documents: [
-      { id: 'doj-001', name: 'FBI Investigation Summary 2006-2007', date: '2006-08-15', pages: 156, mentions: ['Epstein', 'Maxwell'], type: 'Summary' },
-      { id: 'doj-002', name: 'Witness Interview - Redacted', date: '2007-03-22', pages: 34, mentions: ['Epstein'], type: 'Interview' },
-      { id: 'doj-003', name: 'Asset Seizure Documentation', date: '2019-07-08', pages: 67, mentions: ['Epstein'], type: 'Financial' },
-    ]
-  },
-  'flight-logs': {
-    title: 'Flight Logs',
-    icon: '✈️',
-    description: 'Aircraft travel records and passenger manifests',
-    source: null,
-    documents: [
-      { id: 'fl-001', name: 'Flight Log N908JE (2001-2003)', date: '2001-01-01', pages: 34, mentions: ['Epstein', 'Maxwell', 'Clinton'], type: 'Manifest' },
-      { id: 'fl-002', name: 'Flight Log N908JE (2004-2005)', date: '2004-01-01', pages: 28, mentions: ['Epstein', 'Maxwell'], type: 'Manifest' },
-      { id: 'fl-003', name: 'Helicopter Flight Records', date: '2002-06-15', pages: 12, mentions: ['Epstein'], type: 'Manifest' },
-    ]
-  },
-  'financial': {
-    title: 'Financial Records',
-    icon: '💰',
-    description: 'Banking, transactions, and asset documentation',
-    source: null,
-    documents: [
-      { id: 'fin-001', name: 'Bank Account Summary - Deutsche Bank', date: '2019-07-10', pages: 45, mentions: ['Epstein'], type: 'Banking' },
-      { id: 'fin-002', name: 'Property Holdings Overview', date: '2019-08-01', pages: 23, mentions: ['Epstein'], type: 'Assets' },
-    ]
+    cases: [
+      {
+        name: 'First Phase of Declassified Epstein Files',
+        description: 'Released by Attorney General Pamela Bondi on February 27, 2025',
+        documents: [
+          { id: 'evidence-list', name: 'Evidence List from U.S. v. Maxwell', num: 'A', pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/A.%20Evidence%20List%20from%20US%20v.%20Maxwell,%201.20-cr-00330%20(SDNY%202020).pdf' },
+          { id: 'flight-log', name: 'Flight Log from U.S. v. Maxwell', num: 'B', pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/B.%20Flight%20Log%20Released%20in%20US%20v.%20Maxwell,%201.20-cr-00330%20(SDNY%202020).pdf' },
+          { id: 'contact-book', name: 'Contact Book (Redacted)', num: 'C', pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/C.%20Contact%20Book%20(Redacted).pdf' },
+          { id: 'masseuse-list', name: 'Masseuse List (Redacted)', num: 'D', pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/D.%20Masseuse%20List%20(Redacted).pdf' },
+        ],
+        totalDocs: 4,
+      },
+      {
+        name: 'Maxwell Proffer',
+        description: 'Interview transcripts and audio from Ghislaine Maxwell proffer sessions',
+        documents: [],
+        totalDocs: 25,
+        dojLink: 'https://www.justice.gov/epstein/doj-disclosures',
+        note: 'Includes interview transcripts and audio recordings',
+      },
+      {
+        name: 'Memoranda and Correspondence',
+        description: 'DOJ internal reviews and official correspondence',
+        documents: [
+          { id: 'opr-report', name: 'DOJ Office of Professional Responsibility Report', num: '2020.11', pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/Memos.%20&%20Correspondence/2020.11%20DOJ%20Office%20of%20Professional%20Responsibility%20Report.pdf' },
+        ],
+        totalDocs: 6,
+      },
+      {
+        name: 'Epstein Files Transparency Act Data Sets',
+        description: 'Bulk document releases under H.R. 4405',
+        documents: [],
+        totalDocs: 1000,
+        dojLink: 'https://www.justice.gov/epstein/doj-disclosures',
+        note: 'Available as ZIP downloads on DOJ site',
+      },
+    ],
   },
   'foia': {
     title: 'FOIA Records',
     icon: '🔍',
-    description: 'Documents obtained through Freedom of Information Act requests',
+    description: 'Documents obtained through Freedom of Information Act requests. Contains pre-existing redactions made pursuant to FOIA, 5 U.S.C. § 552, and Florida public records laws.',
     source: 'https://www.justice.gov/epstein/foia',
-    documents: [
-      { id: 'foia-001', name: 'FBI FOIA Release - Part 1', date: '2020-01-15', pages: 234, mentions: ['Epstein', 'Maxwell'], type: 'FOIA' },
-      { id: 'foia-002', name: 'Bureau of Prisons Records', date: '2020-03-22', pages: 89, mentions: ['Epstein'], type: 'FOIA' },
-    ]
-  }
+    cases: [
+      {
+        name: 'FBI FOIA Releases',
+        description: 'FBI records released under FOIA',
+        documents: [],
+        totalDocs: 200,
+        dojLink: 'https://www.justice.gov/epstein/foia',
+      },
+    ],
+  },
+  'flight-logs': {
+    title: 'Flight Logs',
+    icon: '✈️',
+    description: 'Aircraft travel records and passenger manifests from Epstein\'s planes (N908JE and N212JE). Now available as part of DOJ Disclosures.',
+    source: 'https://www.justice.gov/epstein/doj-disclosures',
+    cases: [
+      {
+        name: 'Flight Log from U.S. v. Maxwell',
+        description: 'Official flight log released as evidence in Maxwell criminal trial',
+        documents: [
+          { id: 'flight-log', name: 'Flight Log (Declassified)', num: 'B', pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/B.%20Flight%20Log%20Released%20in%20US%20v.%20Maxwell,%201.20-cr-00330%20(SDNY%202020).pdf' },
+        ],
+        totalDocs: 1,
+      },
+    ],
+  },
+  'financial': {
+    title: 'Financial Records',
+    icon: '💰',
+    description: 'Banking, transactions, and asset documentation related to Epstein\'s finances.',
+    source: 'https://www.justice.gov/epstein',
+    cases: [
+      {
+        name: 'Financial Documents',
+        description: 'Financial records are distributed across various court filings',
+        documents: [],
+        totalDocs: 0,
+        note: 'Financial records appear within court case documents',
+      },
+    ],
+  },
 }
 
 export default function CategoryPage({ params }) {
   const { slug } = use(params)
-  const [activeFilter, setActiveFilter] = useState('All')
+  const [expandedCase, setExpandedCase] = useState(null)
   const category = categoryData[slug]
 
   if (!category) {
@@ -76,7 +156,7 @@ export default function CategoryPage({ params }) {
     )
   }
 
-  const filterOptions = ['All', '2001-2005', '2006-2010', '2011-2015', '2016-2020', '2021+']
+  const totalDocs = category.cases.reduce((sum, c) => sum + c.totalDocs, 0)
 
   return (
     <main className="min-h-screen bg-[#0a1628] text-white">
@@ -100,34 +180,17 @@ export default function CategoryPage({ params }) {
             <span className="text-4xl">{category.icon}</span>
             <div>
               <h1 className="text-2xl font-mono tracking-wide">{category.title.toUpperCase()}</h1>
-              <p className="text-white/40 font-mono text-sm">{category.documents.length} DOCUMENTS</p>
+              <p className="text-white/40 font-mono text-sm">{totalDocs.toLocaleString()}+ DOCUMENTS</p>
             </div>
           </div>
-          <p className="text-white/50 mt-4 max-w-2xl font-mono text-sm">{category.description}</p>
-        </div>
-
-        {/* Filters */}
-        <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
-          {filterOptions.map((filter) => (
-            <button
-              key={filter}
-              onClick={() => setActiveFilter(filter)}
-              className={`px-4 py-2 font-mono text-xs tracking-wide whitespace-nowrap transition-colors ${
-                activeFilter === filter
-                  ? 'bg-white text-[#0a1628]'
-                  : 'bg-white/5 text-white/50 border border-white/10 hover:border-white/30'
-              }`}
-            >
-              {filter.toUpperCase()}
-            </button>
-          ))}
+          <p className="text-white/50 mt-4 max-w-3xl font-mono text-sm leading-relaxed">{category.description}</p>
         </div>
 
         {/* Source Link */}
         {category.source && (
           <div className="bg-white/5 border border-white/10 p-4 mb-6">
             <p className="text-sm font-mono text-white/40">
-              OFFICIAL SOURCE:{' '}
+              OFFICIAL DOJ SOURCE:{' '}
               <a href={category.source} target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white underline">
                 {category.source}
               </a>
@@ -135,32 +198,91 @@ export default function CategoryPage({ params }) {
           </div>
         )}
 
-        {/* Document List */}
-        <div className="space-y-2">
-          {category.documents.map((doc) => (
-            <Link
-              key={doc.id}
-              href={`/document/${doc.id}`}
-              className="block bg-white/5 border border-white/10 p-4 hover:border-white/30 hover:bg-white/10 transition-all"
-            >
-              <div className="flex justify-between items-start">
-                <div className="flex-1">
-                  <h3 className="font-mono text-white">{doc.name}</h3>
-                  <p className="text-sm text-white/40 font-mono mt-1">
-                    {doc.pages} PAGES • {doc.date} • {doc.type.toUpperCase()}
-                  </p>
+        {/* Cases */}
+        <div className="space-y-4">
+          {category.cases.map((caseItem, index) => (
+            <div key={index} className="bg-white/5 border border-white/10">
+              {/* Case Header */}
+              <button
+                onClick={() => setExpandedCase(expandedCase === index ? null : index)}
+                className="w-full p-4 text-left hover:bg-white/5 transition-colors"
+              >
+                <div className="flex justify-between items-start">
+                  <div className="flex-1">
+                    <h3 className="font-mono text-white">{caseItem.name}</h3>
+                    <p className="text-sm text-white/40 font-mono mt-1">{caseItem.description}</p>
+                    {caseItem.note && (
+                      <p className="text-xs text-white/30 font-mono mt-2 italic">{caseItem.note}</p>
+                    )}
+                  </div>
+                  <div className="text-right ml-4">
+                    <span className="text-white/40 font-mono text-sm">{caseItem.totalDocs} DOCS</span>
+                    <span className="text-white/30 ml-2">{expandedCase === index ? '▼' : '▶'}</span>
+                  </div>
                 </div>
-                <span className="text-white/30 text-xl">→</span>
-              </div>
-              <div className="flex gap-2 mt-3 flex-wrap">
-                {doc.mentions.map((name) => (
-                  <span key={name} className="bg-white/10 px-2 py-1 text-xs font-mono text-white/50">
-                    {name}
-                  </span>
-                ))}
-              </div>
-            </Link>
+              </button>
+
+              {/* Expanded Documents */}
+              {expandedCase === index && (
+                <div className="border-t border-white/10 p-4">
+                  {caseItem.documents.length > 0 ? (
+                    <div className="space-y-2">
+                      {caseItem.documents.map((doc) => (
+                        <Link
+                          key={doc.id}
+                          href={`/document/${doc.id}`}
+                          className="flex items-center justify-between bg-white/5 border border-white/10 p-3 hover:border-white/30 hover:bg-white/10 transition-all"
+                        >
+                          <div className="flex items-center gap-3">
+                            <span className="text-white/30 font-mono text-xs w-8">{doc.num}</span>
+                            <span className="font-mono text-sm">{doc.name}</span>
+                          </div>
+                          <span className="text-white/30">→</span>
+                        </Link>
+                      ))}
+                      {caseItem.totalDocs > caseItem.documents.length && caseItem.dojLink && (
+                        <a
+                          href={caseItem.dojLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="block text-center py-3 text-white/40 hover:text-white font-mono text-sm"
+                        >
+                          VIEW ALL {caseItem.totalDocs} DOCUMENTS ON DOJ.GOV →
+                        </a>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      {caseItem.dojLink ? (
+                        <a
+                          href={caseItem.dojLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-white/50 hover:text-white font-mono text-sm"
+                        >
+                          VIEW ON DOJ.GOV →
+                        </a>
+                      ) : (
+                        <p className="text-white/30 font-mono text-sm">Documents available on DOJ Epstein Library</p>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
           ))}
+        </div>
+
+        {/* Browse All Link */}
+        <div className="mt-8 text-center">
+          <a
+            href={category.source || 'https://www.justice.gov/epstein'}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-block bg-white text-[#0a1628] px-6 py-3 font-mono text-sm hover:bg-white/90 transition-colors"
+          >
+            BROWSE FULL COLLECTION ON DOJ.GOV
+          </a>
         </div>
       </div>
 
