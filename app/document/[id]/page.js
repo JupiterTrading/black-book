@@ -4,54 +4,22 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { use } from 'react'
 
-// Document database - will be populated by scraper
-// Includes real DOJ document URLs
+// Document metadata - PDFs served via /api/pdf/[id]
 const documentsData = {
-  // Giuffre v. Maxwell documents
-  'giuffre-maxwell-001': {
-    name: 'Giuffre v. Maxwell - Complaint',
-    category: 'Court Records',
-    categorySlug: 'court-records',
-    case: 'Giuffre v. Maxwell, No. 1:15-cv-07433 (S.D.N.Y. 2015)',
-    date: '2015-09-21',
-    type: 'Complaint',
-    pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/Giuffre%20v.%20Maxwell,%20No.%20115-cv-07433%20(S.D.N.Y.%202015)/001.pdf',
-    summary: 'Initial complaint filed by Virginia Giuffre against Ghislaine Maxwell for defamation. This landmark case led to the release of many documents revealing details about Epstein\'s operations.',
-    people: [
-      { name: 'Virginia Giuffre', slug: 'virginia-giuffre', role: 'Plaintiff' },
-      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Defendant' },
-      { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Referenced' },
-    ],
-  },
-  // USA v. Maxwell (criminal case)
-  'usa-maxwell-001': {
-    name: 'USA v. Maxwell - Indictment',
-    category: 'Court Records',
-    categorySlug: 'court-records',
-    case: 'United States v. Maxwell, No. 1:20-cr-00330 (S.D.N.Y. 2020)',
-    date: '2020-07-02',
-    type: 'Indictment',
-    pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/United%20States%20v.%20Maxwell,%20No.%20120-cr-00330%20(S.D.N.Y.%202020)/001.pdf',
-    summary: 'Federal indictment charging Ghislaine Maxwell with conspiracy to entice minors to travel to engage in illegal sex acts, enticement of a minor, and other charges.',
-    people: [
-      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Defendant' },
-      { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Co-conspirator (deceased)' },
-    ],
-  },
-  // Declassified files
+  // === FIRST PHASE DECLASSIFIED FILES ===
   'flight-log': {
     name: 'Flight Log from U.S. v. Maxwell',
     category: 'DOJ Disclosures',
     categorySlug: 'doj-disclosures',
-    case: 'U.S. v. Maxwell, 1:20-cr-00330 (S.D.N.Y. 2020)',
+    case: 'First Phase of Declassified Epstein Files',
     date: '2025-02-27',
     type: 'Evidence',
-    pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/B.%20Flight%20Log%20Released%20in%20US%20v.%20Maxwell,%201.20-cr-00330%20(SDNY%202020).pdf',
-    summary: 'Flight logs from Epstein\'s aircraft released as part of the First Phase of Declassified Epstein Files by Attorney General Pamela Bondi.',
+    summary: 'Official flight logs from Epstein\'s aircraft released as part of the First Phase of Declassified Epstein Files by Attorney General Pamela Bondi. Documents flights on N908JE and N212JE.',
     people: [
       { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Aircraft owner' },
-      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Passenger' },
+      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Frequent passenger' },
     ],
+    sourceUrl: 'https://www.justice.gov/epstein/doj-disclosures',
   },
   'contact-book': {
     name: 'Contact Book (Redacted)',
@@ -60,11 +28,11 @@ const documentsData = {
     case: 'First Phase of Declassified Epstein Files',
     date: '2025-02-27',
     type: 'Evidence',
-    pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/C.%20Contact%20Book%20(Redacted).pdf',
-    summary: 'Epstein\'s contact book with redactions applied for victim names and other identifying information.',
+    summary: 'Epstein\'s personal contact book containing names and contact information. Redactions applied for victim names and other identifying information as marked "DOJ Redaction."',
     people: [
       { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Owner' },
     ],
+    sourceUrl: 'https://www.justice.gov/epstein/doj-disclosures',
   },
   'evidence-list': {
     name: 'Evidence List from U.S. v. Maxwell',
@@ -73,11 +41,11 @@ const documentsData = {
     case: 'U.S. v. Maxwell, 1:20-cr-00330 (S.D.N.Y. 2020)',
     date: '2025-02-27',
     type: 'Evidence List',
-    pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/A.%20Evidence%20List%20from%20US%20v.%20Maxwell,%201.20-cr-00330%20(SDNY%202020).pdf',
-    summary: 'Complete evidence list from the criminal prosecution of Ghislaine Maxwell.',
+    summary: 'Complete evidence list from the federal criminal prosecution of Ghislaine Maxwell, cataloging all exhibits presented at trial.',
     people: [
       { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Defendant' },
     ],
+    sourceUrl: 'https://www.justice.gov/epstein/doj-disclosures',
   },
   'masseuse-list': {
     name: 'Masseuse List (Redacted)',
@@ -86,13 +54,15 @@ const documentsData = {
     case: 'First Phase of Declassified Epstein Files',
     date: '2025-02-27',
     type: 'Evidence',
-    pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/First%20Phase%20of%20Declassified%20Epstein%20Files/D.%20Masseuse%20List%20(Redacted).pdf',
-    summary: 'List of individuals recruited as "masseuses" with redactions for victim protection.',
+    summary: 'List of individuals recruited as "masseuses" for Epstein. Redactions applied for victim protection.',
     people: [
       { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Subject' },
+      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Referenced' },
     ],
+    sourceUrl: 'https://www.justice.gov/epstein/doj-disclosures',
   },
-  // OPR Report
+
+  // === DOJ REPORTS ===
   'opr-report': {
     name: 'DOJ Office of Professional Responsibility Report',
     category: 'DOJ Disclosures',
@@ -100,13 +70,86 @@ const documentsData = {
     case: 'DOJ Internal Review',
     date: '2020-11',
     type: 'Report',
-    pdfUrl: 'https://www.justice.gov/multimedia/DOJ%20Disclosures/Memos.%20&%20Correspondence/2020.11%20DOJ%20Office%20of%20Professional%20Responsibility%20Report.pdf',
-    summary: 'Internal DOJ review of the handling of the Epstein case, examining the 2008 Non-Prosecution Agreement.',
+    summary: 'Internal DOJ investigation into the handling of the Epstein case, specifically examining the controversial 2008 Non-Prosecution Agreement negotiated by then-U.S. Attorney Alexander Acosta.',
     people: [
       { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Subject' },
     ],
+    sourceUrl: 'https://www.justice.gov/epstein/doj-disclosures',
   },
-  // Doe cases
+  'opr-summary': {
+    name: 'OPR Report Executive Summary',
+    category: 'DOJ Disclosures',
+    categorySlug: 'doj-disclosures',
+    case: 'DOJ Internal Review',
+    date: '2020-11',
+    type: 'Report Summary',
+    summary: 'Executive summary of the DOJ Office of Professional Responsibility investigation into the Epstein Non-Prosecution Agreement.',
+    people: [
+      { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Subject' },
+    ],
+    sourceUrl: 'https://www.justice.gov/epstein/doj-disclosures',
+  },
+  'bondi-letter': {
+    name: 'Letter from AG Bondi to FBI Director Patel',
+    category: 'DOJ Disclosures',
+    categorySlug: 'doj-disclosures',
+    case: 'DOJ Correspondence',
+    date: '2025-02-27',
+    type: 'Correspondence',
+    summary: 'Official correspondence from Attorney General Pamela Bondi to FBI Director Kash Patel regarding the release of Epstein files.',
+    people: [],
+    sourceUrl: 'https://www.justice.gov/epstein/doj-disclosures',
+  },
+
+  // === GIUFFRE v. MAXWELL ===
+  'giuffre-maxwell-001': {
+    name: 'Giuffre v. Maxwell - Complaint',
+    category: 'Court Records',
+    categorySlug: 'court-records',
+    case: 'Giuffre v. Maxwell, No. 1:15-cv-07433 (S.D.N.Y. 2015)',
+    date: '2015-09-21',
+    type: 'Complaint',
+    summary: 'Initial defamation complaint filed by Virginia Giuffre against Ghislaine Maxwell. This landmark civil case led to the unsealing of thousands of documents revealing details about Epstein\'s operations and associates.',
+    people: [
+      { name: 'Virginia Giuffre', slug: 'virginia-giuffre', role: 'Plaintiff' },
+      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Defendant' },
+      { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Referenced' },
+    ],
+    sourceUrl: 'https://www.justice.gov/epstein/court-records',
+  },
+  'giuffre-maxwell-034': {
+    name: 'Giuffre v. Maxwell - Maxwell Deposition',
+    category: 'Court Records',
+    categorySlug: 'court-records',
+    case: 'Giuffre v. Maxwell, No. 1:15-cv-07433 (S.D.N.Y. 2015)',
+    date: '2016-04-22',
+    type: 'Deposition',
+    summary: 'Sworn deposition testimony of Ghislaine Maxwell taken as part of the civil defamation case. Contains Maxwell\'s answers under oath regarding her relationship with Epstein and knowledge of his activities.',
+    people: [
+      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Deponent' },
+      { name: 'Virginia Giuffre', slug: 'virginia-giuffre', role: 'Plaintiff' },
+      { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Referenced' },
+    ],
+    sourceUrl: 'https://www.justice.gov/epstein/court-records',
+  },
+
+  // === USA v. MAXWELL (Criminal) ===
+  'usa-maxwell-001': {
+    name: 'USA v. Maxwell - Indictment',
+    category: 'Court Records',
+    categorySlug: 'court-records',
+    case: 'United States v. Maxwell, No. 1:20-cr-00330 (S.D.N.Y. 2020)',
+    date: '2020-07-02',
+    type: 'Indictment',
+    summary: 'Federal grand jury indictment charging Ghislaine Maxwell with conspiracy to entice minors to travel to engage in illegal sex acts, enticement of a minor to travel to engage in illegal sex acts, transportation of a minor with intent to engage in criminal sexual activity, and perjury.',
+    people: [
+      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Defendant' },
+      { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Co-conspirator (deceased)' },
+    ],
+    sourceUrl: 'https://www.justice.gov/epstein/court-records',
+  },
+
+  // === DOE CASES ===
   'doe-3-001': {
     name: 'Doe No. 3 v. Epstein - Complaint',
     category: 'Court Records',
@@ -114,80 +157,96 @@ const documentsData = {
     case: 'Doe No. 3 v. Epstein, No. 9:08-cv-80232 (S.D. Fla. 2008)',
     date: '2008-04-16',
     type: 'Complaint',
-    pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/Doe%20No.%203%20v.%20Epstein,%20No.%20908-cv-80232%20(S.D.%20Fla.%202008)/001.pdf',
-    summary: 'Civil complaint filed by victim identified as Jane Doe No. 3 against Jeffrey Epstein.',
+    summary: 'Civil complaint filed by victim identified as Jane Doe No. 3 against Jeffrey Epstein in the Southern District of Florida.',
     people: [
       { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Defendant' },
     ],
+    sourceUrl: 'https://www.justice.gov/epstein/court-records',
   },
-  // Bryant v. Indyke
+
+  // === BRYANT v. INDYKE ===
   'bryant-001': {
-    name: 'Bryant v. Indyke - Filing 001',
+    name: 'Bryant v. Indyke - Filing',
     category: 'Court Records',
     categorySlug: 'court-records',
     case: 'Bryant v. Indyke, No. 1:19-cv-10479 (S.D.N.Y. 2019)',
     date: '2019',
     type: 'Court Filing',
-    pdfUrl: 'https://www.justice.gov/multimedia/Court%20Records/Bryant%20v.%20Indyke,%20No.%20119-cv-10479%20(S.D.N.Y.%202019)/001.pdf',
-    summary: 'Lawsuit against executors of Epstein\'s estate.',
+    summary: 'Lawsuit filed against Richard Indyke and Darren Indyke, co-executors of the Epstein estate, by alleged victims seeking compensation.',
     people: [
       { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Deceased (Estate)' },
     ],
+    sourceUrl: 'https://www.justice.gov/epstein/court-records',
   },
 }
 
 const defaultDoc = {
-  name: 'Document Not Found',
-  category: 'Unknown',
+  name: 'Document',
+  category: 'DOJ Epstein Library',
   categorySlug: 'court-records',
-  case: 'Unknown',
-  date: 'Unknown',
-  type: 'Document',
-  pdfUrl: null,
-  summary: 'This document has not been indexed yet. Check the DOJ Epstein Library for the full collection.',
+  case: 'See DOJ Epstein Library',
+  date: 'See document',
+  type: 'PDF',
+  summary: 'This document is part of the DOJ Epstein Library. View the full document for details.',
   people: [],
+  sourceUrl: 'https://www.justice.gov/epstein',
 }
 
 export default function DocumentPage({ params }) {
   const { id } = use(params)
   const [activeTab, setActiveTab] = useState('document')
   const [pdfError, setPdfError] = useState(false)
+  const [loading, setLoading] = useState(true)
+  
   const doc = documentsData[id] || { ...defaultDoc, name: `Document ${id}` }
+  
+  // PDF is served via our proxy API
+  const pdfUrl = `/api/pdf/${id}`
 
   return (
     <main className="min-h-screen bg-[#0a1628] text-white">
       {/* Header */}
       <header className="border-b border-white/10 p-4 bg-[#0a1628]/90 backdrop-blur-sm sticky top-0 z-30">
-        <div className="max-w-7xl mx-auto flex items-center gap-4">
+        <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Link href="/" className="flex items-center gap-3">
             <div className="w-6 h-8 relative">
               <Image src="/hourglass-static.png" alt="Logo" fill className="object-contain" unoptimized />
             </div>
             <span className="font-mono text-sm text-white/50">THE BLACK BOOK</span>
           </Link>
+          <a
+            href={doc.sourceUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-xs font-mono text-white/30 hover:text-white/60 transition-colors"
+          >
+            DOJ SOURCE →
+          </a>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto">
         {/* Document Header */}
-        <div className="p-6 border-b border-white/10">
+        <div className="p-4 md:p-6 border-b border-white/10">
           <Link href={`/category/${doc.categorySlug}`} className="text-white/40 text-sm font-mono hover:text-white">
             ← {doc.category.toUpperCase()}
           </Link>
-          <h1 className="text-xl font-mono mt-3">{doc.name}</h1>
+          <h1 className="text-lg md:text-xl font-mono mt-3 leading-tight">{doc.name}</h1>
           <p className="text-sm text-white/40 font-mono mt-1">{doc.case}</p>
-          <p className="text-sm text-white/40 font-mono mt-1">
-            {doc.date} • {doc.type.toUpperCase()}
-          </p>
+          <div className="flex flex-wrap gap-2 mt-2 text-xs font-mono text-white/30">
+            <span>{doc.date}</span>
+            <span>•</span>
+            <span>{doc.type.toUpperCase()}</span>
+          </div>
         </div>
 
         {/* Tabs */}
-        <div className="flex gap-2 p-4 border-b border-white/10 flex-wrap">
+        <div className="flex gap-2 p-4 border-b border-white/10 overflow-x-auto">
           {['document', 'context', 'people'].map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 font-mono text-xs tracking-wide transition-colors ${
+              className={`px-4 py-2 font-mono text-xs tracking-wide transition-colors whitespace-nowrap ${
                 activeTab === tab
                   ? 'bg-white text-[#0a1628]'
                   : 'bg-white/5 text-white/50 border border-white/10 hover:border-white/30'
@@ -196,70 +255,72 @@ export default function DocumentPage({ params }) {
               {tab.toUpperCase()}
             </button>
           ))}
-          {doc.pdfUrl && (
-            <a
-              href={doc.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="ml-auto px-4 py-2 font-mono text-xs tracking-wide bg-white/5 text-white/50 border border-white/10 hover:border-white/30 hover:text-white transition-colors"
-            >
-              OPEN ON DOJ.GOV →
-            </a>
-          )}
+          <a
+            href={pdfUrl}
+            download={`${id}.pdf`}
+            className="ml-auto px-4 py-2 font-mono text-xs tracking-wide bg-white/5 text-white/50 border border-white/10 hover:border-white/30 hover:text-white transition-colors whitespace-nowrap"
+          >
+            DOWNLOAD PDF
+          </a>
         </div>
 
         {/* Document Tab - PDF Viewer */}
         {activeTab === 'document' && (
-          <div className="p-4 md:p-6">
-            {doc.pdfUrl ? (
-              <div className="bg-white/5 border border-white/10 overflow-hidden">
-                {!pdfError ? (
-                  <iframe
-                    src={`${doc.pdfUrl}#toolbar=1&navpanes=0&view=FitH`}
-                    className="w-full h-[75vh] md:h-[80vh]"
-                    title={doc.name}
-                    onError={() => setPdfError(true)}
-                  />
-                ) : (
-                  <div className="h-[60vh] flex items-center justify-center">
-                    <div className="text-center p-6">
-                      <p className="text-white/50 font-mono mb-4">PDF could not be embedded directly</p>
-                      <p className="text-white/30 font-mono text-sm mb-6">Some browsers block cross-origin PDFs</p>
+          <div className="p-2 md:p-4">
+            <div className="bg-white/5 border border-white/10 overflow-hidden relative">
+              {loading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-[#0a1628] z-10">
+                  <div className="text-center">
+                    <div className="animate-pulse text-4xl mb-4">📄</div>
+                    <p className="text-white/50 font-mono text-sm">LOADING DOCUMENT...</p>
+                  </div>
+                </div>
+              )}
+              {!pdfError ? (
+                <iframe
+                  src={pdfUrl}
+                  className="w-full h-[80vh]"
+                  title={doc.name}
+                  onLoad={() => setLoading(false)}
+                  onError={() => {
+                    setLoading(false)
+                    setPdfError(true)
+                  }}
+                />
+              ) : (
+                <div className="h-[60vh] flex items-center justify-center">
+                  <div className="text-center p-6">
+                    <div className="text-6xl mb-4">⚠️</div>
+                    <p className="text-white/50 font-mono mb-2">DOCUMENT LOADING ERROR</p>
+                    <p className="text-white/30 font-mono text-sm mb-6">The document may be temporarily unavailable</p>
+                    <div className="flex flex-col gap-3">
                       <a
-                        href={doc.pdfUrl}
+                        href={pdfUrl}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="bg-white text-[#0a1628] px-6 py-3 font-mono text-sm hover:bg-white/90 transition-colors inline-block"
                       >
-                        OPEN PDF ON DOJ.GOV
+                        OPEN IN NEW TAB
+                      </a>
+                      <a
+                        href={doc.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-white/50 hover:text-white font-mono text-sm"
+                      >
+                        View on DOJ.gov →
                       </a>
                     </div>
                   </div>
-                )}
-              </div>
-            ) : (
-              <div className="h-[60vh] flex items-center justify-center bg-white/5 border border-white/10">
-                <div className="text-center text-white/50 p-6">
-                  <div className="text-6xl mb-4">📄</div>
-                  <p className="font-mono">DOCUMENT NOT AVAILABLE FOR DIRECT VIEWING</p>
-                  <p className="text-sm mt-2 font-mono text-white/30">This document may be spread across multiple files</p>
-                  <a
-                    href="https://www.justice.gov/epstein"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-6 bg-white text-[#0a1628] px-6 py-3 font-mono text-sm hover:bg-white/90 transition-colors inline-block"
-                  >
-                    BROWSE DOJ LIBRARY
-                  </a>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         )}
 
         {/* Context Tab */}
         {activeTab === 'context' && (
-          <div className="p-6 max-w-3xl">
+          <div className="p-4 md:p-6 max-w-3xl">
             <div className="bg-white/5 border border-white/10 p-5 mb-6">
               <h3 className="font-mono text-sm text-white/60 mb-2">SUMMARY</h3>
               <p className="text-white/80 leading-relaxed">{doc.summary}</p>
@@ -267,10 +328,10 @@ export default function DocumentPage({ params }) {
             
             <div className="bg-white/5 border border-white/10 p-5 mb-6">
               <h3 className="font-mono text-sm text-white/60 mb-3">DOCUMENT INFO</h3>
-              <div className="space-y-2 text-sm font-mono">
-                <div className="flex justify-between">
+              <div className="space-y-3 text-sm font-mono">
+                <div className="flex justify-between items-start">
                   <span className="text-white/40">Case</span>
-                  <span className="text-white/80 text-right max-w-[60%]">{doc.case}</span>
+                  <span className="text-white/80 text-right max-w-[65%]">{doc.case}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-white/40">Type</span>
@@ -287,25 +348,23 @@ export default function DocumentPage({ params }) {
               </div>
             </div>
 
-            {doc.pdfUrl && (
-              <div className="bg-white/5 border border-white/10 p-5">
-                <h3 className="font-mono text-sm text-white/60 mb-3">SOURCE URL</h3>
-                <a 
-                  href={doc.pdfUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="text-sm text-white/70 hover:text-white font-mono break-all"
-                >
-                  {doc.pdfUrl}
-                </a>
-              </div>
-            )}
+            <div className="bg-white/5 border border-white/10 p-5">
+              <h3 className="font-mono text-sm text-white/60 mb-3">SOURCE</h3>
+              <a 
+                href={doc.sourceUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-sm text-white/70 hover:text-white font-mono"
+              >
+                {doc.sourceUrl} →
+              </a>
+            </div>
           </div>
         )}
 
         {/* People Tab */}
         {activeTab === 'people' && (
-          <div className="p-6 max-w-3xl">
+          <div className="p-4 md:p-6 max-w-3xl">
             {doc.people.length > 0 ? (
               <div className="space-y-2">
                 {doc.people.map((person) => (
@@ -328,7 +387,10 @@ export default function DocumentPage({ params }) {
                 ))}
               </div>
             ) : (
-              <p className="text-white/40 font-mono">No people indexed for this document yet.</p>
+              <div className="text-center py-8">
+                <p className="text-white/40 font-mono">No people indexed for this document yet.</p>
+                <p className="text-white/20 font-mono text-sm mt-2">People mentioned will be added as documents are processed.</p>
+              </div>
             )}
           </div>
         )}
