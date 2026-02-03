@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { use } from 'react'
 
 const categoryData = {
@@ -51,7 +52,7 @@ const categoryData = {
   },
   'foia': {
     title: 'FOIA Records',
-    icon: '📁',
+    icon: '🔍',
     description: 'Documents obtained through Freedom of Information Act requests',
     source: 'https://www.justice.gov/epstein/foia',
     documents: [
@@ -61,8 +62,6 @@ const categoryData = {
   }
 }
 
-const filterOptions = ['All', '2001-2005', '2006-2010', '2011-2015', '2016-2020', '2021+']
-
 export default function CategoryPage({ params }) {
   const { slug } = use(params)
   const [activeFilter, setActiveFilter] = useState('All')
@@ -70,54 +69,66 @@ export default function CategoryPage({ params }) {
 
   if (!category) {
     return (
-      <main className="min-h-screen bg-black text-white p-8">
-        <h1 className="text-2xl font-bold">Category not found</h1>
-        <Link href="/" className="text-blue-400 hover:underline mt-4 block">Back to home</Link>
+      <main className="min-h-screen bg-[#0a1628] text-white p-8">
+        <h1 className="text-2xl font-mono">CATEGORY NOT FOUND</h1>
+        <Link href="/" className="text-white/50 hover:text-white mt-4 block font-mono text-sm">← BACK TO HOME</Link>
       </main>
     )
   }
 
+  const filterOptions = ['All', '2001-2005', '2006-2010', '2011-2015', '2016-2020', '2021+']
+
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-[#0a1628] text-white">
       {/* Header */}
-      <header className="border-b border-gray-800 p-6">
-        <div className="max-w-6xl mx-auto">
-          <Link href="/" className="text-gray-400 text-sm hover:text-white">← Back to all categories</Link>
-          <div className="flex items-center gap-3 mt-3">
-            <span className="text-4xl">{category.icon}</span>
-            <div>
-              <h1 className="text-2xl font-bold">{category.title}</h1>
-              <p className="text-gray-400">{category.documents.length} documents</p>
+      <header className="border-b border-white/10 p-6 bg-[#0a1628]/90 backdrop-blur-sm sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-6 h-8 relative">
+              <Image src="/hourglass-static.png" alt="Logo" fill className="object-contain" unoptimized />
             </div>
-          </div>
-          <p className="text-gray-400 mt-3 max-w-2xl">{category.description}</p>
+            <span className="font-mono text-sm text-white/50">THE BLACK BOOK</span>
+          </Link>
         </div>
       </header>
 
       <div className="max-w-6xl mx-auto p-6">
+        {/* Category Header */}
+        <div className="mb-8">
+          <Link href="/" className="text-white/40 text-sm font-mono hover:text-white mb-4 inline-block">← ALL CATEGORIES</Link>
+          <div className="flex items-center gap-4 mt-4">
+            <span className="text-4xl">{category.icon}</span>
+            <div>
+              <h1 className="text-2xl font-mono tracking-wide">{category.title.toUpperCase()}</h1>
+              <p className="text-white/40 font-mono text-sm">{category.documents.length} DOCUMENTS</p>
+            </div>
+          </div>
+          <p className="text-white/50 mt-4 max-w-2xl font-mono text-sm">{category.description}</p>
+        </div>
+
         {/* Filters */}
         <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
           {filterOptions.map((filter) => (
             <button
               key={filter}
               onClick={() => setActiveFilter(filter)}
-              className={`px-4 py-2 rounded-full text-sm whitespace-nowrap transition-colors ${
+              className={`px-4 py-2 font-mono text-xs tracking-wide whitespace-nowrap transition-colors ${
                 activeFilter === filter
-                  ? 'bg-white text-black'
-                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                  ? 'bg-white text-[#0a1628]'
+                  : 'bg-white/5 text-white/50 border border-white/10 hover:border-white/30'
               }`}
             >
-              {filter}
+              {filter.toUpperCase()}
             </button>
           ))}
         </div>
 
         {/* Source Link */}
         {category.source && (
-          <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 mb-6">
-            <p className="text-sm text-gray-400">
-              Official source: {' '}
-              <a href={category.source} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline">
+          <div className="bg-white/5 border border-white/10 p-4 mb-6">
+            <p className="text-sm font-mono text-white/40">
+              OFFICIAL SOURCE:{' '}
+              <a href={category.source} target="_blank" rel="noopener noreferrer" className="text-white/70 hover:text-white underline">
                 {category.source}
               </a>
             </p>
@@ -125,25 +136,25 @@ export default function CategoryPage({ params }) {
         )}
 
         {/* Document List */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {category.documents.map((doc) => (
             <Link
               key={doc.id}
               href={`/document/${doc.id}`}
-              className="block bg-gray-900 border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-colors"
+              className="block bg-white/5 border border-white/10 p-4 hover:border-white/30 hover:bg-white/10 transition-all"
             >
               <div className="flex justify-between items-start">
                 <div className="flex-1">
-                  <h3 className="font-semibold text-white">{doc.name}</h3>
-                  <p className="text-sm text-gray-400 mt-1">
-                    {doc.pages} pages • {doc.date} • {doc.type}
+                  <h3 className="font-mono text-white">{doc.name}</h3>
+                  <p className="text-sm text-white/40 font-mono mt-1">
+                    {doc.pages} PAGES • {doc.date} • {doc.type.toUpperCase()}
                   </p>
                 </div>
-                <span className="text-gray-500 text-xl">→</span>
+                <span className="text-white/30 text-xl">→</span>
               </div>
               <div className="flex gap-2 mt-3 flex-wrap">
                 {doc.mentions.map((name) => (
-                  <span key={name} className="bg-gray-800 px-2 py-1 rounded text-xs text-gray-300">
+                  <span key={name} className="bg-white/10 px-2 py-1 text-xs font-mono text-white/50">
                     {name}
                   </span>
                 ))}
@@ -154,8 +165,13 @@ export default function CategoryPage({ params }) {
       </div>
 
       {/* Footer */}
-      <footer className="p-6 border-t border-gray-800 mt-8 text-center text-gray-500 text-sm max-w-6xl mx-auto">
-        <p>All documents sourced from <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">justice.gov/epstein</a></p>
+      <footer className="p-6 border-t border-white/10 mt-8 text-center">
+        <p className="text-xs font-mono text-white/30">
+          ALL DOCUMENTS SOURCED FROM{' '}
+          <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+            JUSTICE.GOV/EPSTEIN
+          </a>
+        </p>
       </footer>
     </main>
   )

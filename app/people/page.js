@@ -1,86 +1,98 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 const people = [
-  { slug: 'jeffrey-epstein', name: 'Jeffrey Epstein', documents: 1847, status: 'Deceased', statusColor: 'bg-gray-700 text-gray-300' },
-  { slug: 'ghislaine-maxwell', name: 'Ghislaine Maxwell', documents: 243, status: 'Convicted', statusColor: 'bg-red-900/50 text-red-300' },
-  { slug: 'jean-luc-brunel', name: 'Jean-Luc Brunel', documents: 87, status: 'Deceased', statusColor: 'bg-gray-700 text-gray-300' },
-  { slug: 'bill-clinton', name: 'Bill Clinton', documents: 23, status: 'Named', statusColor: 'bg-yellow-900/50 text-yellow-300' },
-  { slug: 'alan-dershowitz', name: 'Alan Dershowitz', documents: 15, status: 'Named', statusColor: 'bg-yellow-900/50 text-yellow-300' },
-  { slug: 'prince-andrew', name: 'Prince Andrew', documents: 67, status: 'Named', statusColor: 'bg-yellow-900/50 text-yellow-300' },
-  { slug: 'sarah-kellen', name: 'Sarah Kellen', documents: 34, status: 'Named', statusColor: 'bg-yellow-900/50 text-yellow-300' },
-  { slug: 'nadia-marcinkova', name: 'Nadia Marcinkova', documents: 28, status: 'Named', statusColor: 'bg-yellow-900/50 text-yellow-300' },
-  { slug: 'lesley-groff', name: 'Lesley Groff', documents: 22, status: 'Named', statusColor: 'bg-yellow-900/50 text-yellow-300' },
+  { slug: 'jeffrey-epstein', name: 'Jeffrey Epstein', documents: 1847, status: 'Deceased', statusStyle: 'bg-white/10 text-white/50' },
+  { slug: 'ghislaine-maxwell', name: 'Ghislaine Maxwell', documents: 243, status: 'Convicted', statusStyle: 'bg-red-500/20 text-red-300' },
+  { slug: 'jean-luc-brunel', name: 'Jean-Luc Brunel', documents: 87, status: 'Deceased', statusStyle: 'bg-white/10 text-white/50' },
+  { slug: 'bill-clinton', name: 'Bill Clinton', documents: 23, status: 'Named', statusStyle: 'bg-yellow-500/20 text-yellow-300' },
+  { slug: 'alan-dershowitz', name: 'Alan Dershowitz', documents: 15, status: 'Named', statusStyle: 'bg-yellow-500/20 text-yellow-300' },
+  { slug: 'prince-andrew', name: 'Prince Andrew', documents: 67, status: 'Named', statusStyle: 'bg-yellow-500/20 text-yellow-300' },
+  { slug: 'sarah-kellen', name: 'Sarah Kellen', documents: 34, status: 'Named', statusStyle: 'bg-yellow-500/20 text-yellow-300' },
+  { slug: 'nadia-marcinkova', name: 'Nadia Marcinkova', documents: 28, status: 'Named', statusStyle: 'bg-yellow-500/20 text-yellow-300' },
+  { slug: 'lesley-groff', name: 'Lesley Groff', documents: 22, status: 'Named', statusStyle: 'bg-yellow-500/20 text-yellow-300' },
 ]
 
 export default function PeoplePage() {
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-[#0a1628] text-white">
       {/* Header */}
-      <header className="border-b border-gray-800 p-6">
-        <div className="max-w-4xl mx-auto">
-          <Link href="/" className="text-gray-400 text-sm hover:text-white">← Back to home</Link>
-          <h1 className="text-3xl font-bold mt-4">People Index</h1>
-          <p className="text-gray-400 mt-2">Individuals mentioned in the Epstein documents</p>
+      <header className="border-b border-white/10 p-6 bg-[#0a1628]/90 backdrop-blur-sm sticky top-0 z-30">
+        <div className="max-w-4xl mx-auto flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-6 h-8 relative">
+              <Image src="/hourglass-static.png" alt="Logo" fill className="object-contain" unoptimized />
+            </div>
+            <span className="font-mono text-sm text-white/50">THE BLACK BOOK</span>
+          </Link>
         </div>
       </header>
 
       <div className="max-w-4xl mx-auto p-6">
+        <h1 className="text-2xl font-mono tracking-wide mb-2">PEOPLE INDEX</h1>
+        <p className="text-white/40 font-mono text-sm mb-8">Individuals mentioned in the Epstein documents</p>
+
         {/* Legend */}
-        <div className="flex flex-wrap gap-4 mb-6 text-sm">
+        <div className="flex flex-wrap gap-4 mb-8 text-xs font-mono">
           <div className="flex items-center gap-2">
-            <span className="bg-red-900/50 text-red-300 px-2 py-1 rounded text-xs">Convicted</span>
-            <span className="text-gray-500">Convicted of related crimes</span>
+            <span className="bg-red-500/20 text-red-300 px-2 py-1">CONVICTED</span>
+            <span className="text-white/30">Convicted of related crimes</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="bg-yellow-900/50 text-yellow-300 px-2 py-1 rounded text-xs">Named</span>
-            <span className="text-gray-500">Appears in documents</span>
+            <span className="bg-yellow-500/20 text-yellow-300 px-2 py-1">NAMED</span>
+            <span className="text-white/30">Appears in documents</span>
           </div>
           <div className="flex items-center gap-2">
-            <span className="bg-gray-700 text-gray-300 px-2 py-1 rounded text-xs">Deceased</span>
-            <span className="text-gray-500">No longer living</span>
+            <span className="bg-white/10 text-white/50 px-2 py-1">DECEASED</span>
+            <span className="text-white/30">No longer living</span>
           </div>
         </div>
 
         {/* People List */}
-        <div className="space-y-3">
+        <div className="space-y-2">
           {people.map((person) => (
             <Link
               key={person.slug}
               href={`/person/${person.slug}`}
-              className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-colors"
+              className="flex items-center justify-between bg-white/5 border border-white/10 p-4 hover:border-white/30 hover:bg-white/10 transition-all"
             >
               <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gray-700 rounded-full flex items-center justify-center text-lg font-medium">
+                <div className="w-12 h-12 bg-white/10 border border-white/20 rounded-full flex items-center justify-center font-mono">
                   {person.name.split(' ').map(n => n[0]).join('')}
                 </div>
                 <div>
-                  <h3 className="font-semibold">{person.name}</h3>
-                  <p className="text-sm text-gray-400">{person.documents} documents</p>
+                  <h3 className="font-mono">{person.name}</h3>
+                  <p className="text-sm text-white/40 font-mono">{person.documents} DOCUMENTS</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <span className={`px-3 py-1 rounded-full text-xs ${person.statusColor}`}>
-                  {person.status}
+                <span className={`px-3 py-1 text-xs font-mono ${person.statusStyle}`}>
+                  {person.status.toUpperCase()}
                 </span>
-                <span className="text-gray-500">→</span>
+                <span className="text-white/30">→</span>
               </div>
             </Link>
           ))}
         </div>
 
-        {/* Note */}
-        <div className="mt-8 p-4 bg-gray-900 border border-gray-800 rounded-lg">
-          <p className="text-sm text-gray-400">
-            <strong className="text-white">Note:</strong> Appearance in these documents does not imply guilt or wrongdoing. 
-            Many individuals appear in documents as witnesses, victims, or in other non-criminal capacities. 
-            Only those with "Convicted" status have been found guilty of related crimes.
+        {/* Disclaimer */}
+        <div className="mt-8 p-4 bg-white/5 border border-white/10">
+          <p className="text-xs font-mono text-white/40 leading-relaxed">
+            <strong className="text-white/60">NOTE:</strong> Appearance in these documents does not imply guilt or wrongdoing. 
+            Many individuals appear as witnesses, victims, or in other non-criminal capacities. 
+            Only those with "CONVICTED" status have been found guilty of related crimes.
           </p>
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="p-6 border-t border-gray-800 mt-12 text-center text-gray-500 text-sm">
-        <p>All documents sourced from <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">justice.gov/epstein</a></p>
+      <footer className="p-6 border-t border-white/10 mt-12 text-center">
+        <p className="text-xs font-mono text-white/30">
+          ALL DOCUMENTS SOURCED FROM{' '}
+          <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+            JUSTICE.GOV/EPSTEIN
+          </a>
+        </p>
       </footer>
     </main>
   )

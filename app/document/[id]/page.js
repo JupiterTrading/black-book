@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { use } from 'react'
 
 const documentsData = {
@@ -19,13 +20,9 @@ const documentsData = {
       { label: 'Location discussed', value: 'Palm Beach, FL' },
     ],
     people: [
-      { name: 'Jeffrey Epstein', role: 'Primary subject' },
-      { name: 'Ghislaine Maxwell', role: 'Named 47 times' },
-      { name: 'Sarah Kellen', role: 'Named 12 times' },
-    ],
-    relatedNews: [
-      { title: 'Epstein house manager details life at Palm Beach mansion', source: 'Miami Herald', date: 'Jul 2019', url: '#' },
-      { title: 'Deposition reveals new details about Maxwell\'s role', source: 'New York Times', date: 'Aug 2019', url: '#' },
+      { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: 'Primary subject' },
+      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: 'Named 47 times' },
+      { name: 'Sarah Kellen', slug: 'sarah-kellen', role: 'Named 12 times' },
     ],
     relatedDocs: [
       { id: 'cr-002', name: 'Virginia Giuffre vs. Maxwell Filing' },
@@ -47,14 +44,10 @@ const documentsData = {
       { label: 'Named passengers', value: '87 individuals' },
     ],
     people: [
-      { name: 'Jeffrey Epstein', role: '142 flights' },
-      { name: 'Ghislaine Maxwell', role: '87 flights' },
-      { name: 'Bill Clinton', role: '26 flights' },
-      { name: 'Alan Dershowitz', role: '11 flights' },
-    ],
-    relatedNews: [
-      { title: 'Flight logs reveal scope of Epstein\'s travel network', source: 'Washington Post', date: 'Jan 2024', url: '#' },
-      { title: 'Analysis of "Lolita Express" passenger records', source: 'Daily Beast', date: 'Dec 2023', url: '#' },
+      { name: 'Jeffrey Epstein', slug: 'jeffrey-epstein', role: '142 flights' },
+      { name: 'Ghislaine Maxwell', slug: 'ghislaine-maxwell', role: '87 flights' },
+      { name: 'Bill Clinton', slug: 'bill-clinton', role: '26 flights' },
+      { name: 'Alan Dershowitz', slug: 'alan-dershowitz', role: '11 flights' },
     ],
     relatedDocs: [
       { id: 'fl-002', name: 'Flight Log N908JE (2004-2005)' },
@@ -63,7 +56,6 @@ const documentsData = {
   }
 }
 
-// Default document for unknown IDs
 const defaultDoc = {
   name: 'Document',
   category: 'Unknown',
@@ -75,7 +67,6 @@ const defaultDoc = {
   summary: 'Document details are being compiled. Check back soon for full context and analysis.',
   keyDetails: [],
   people: [],
-  relatedNews: [],
   relatedDocs: []
 }
 
@@ -85,37 +76,49 @@ export default function DocumentPage({ params }) {
   const doc = documentsData[id] || { ...defaultDoc, name: `Document ${id}` }
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-[#0a1628] text-white">
       {/* Header */}
-      <header className="border-b border-gray-800 p-4">
-        <div className="max-w-6xl mx-auto">
-          <Link href={`/category/${doc.categorySlug}`} className="text-gray-400 text-sm hover:text-white">
-            ← {doc.category}
+      <header className="border-b border-white/10 p-4 bg-[#0a1628]/90 backdrop-blur-sm sticky top-0 z-30">
+        <div className="max-w-6xl mx-auto flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-6 h-8 relative">
+              <Image src="/hourglass-static.png" alt="Logo" fill className="object-contain" unoptimized />
+            </div>
+            <span className="font-mono text-sm text-white/50">THE BLACK BOOK</span>
           </Link>
-          <h1 className="text-xl font-bold mt-2">{doc.name}</h1>
-          <p className="text-sm text-gray-400 mt-1">{doc.pages} pages • {doc.date} • {doc.type}</p>
         </div>
       </header>
 
       <div className="max-w-6xl mx-auto">
+        {/* Document Header */}
+        <div className="p-6 border-b border-white/10">
+          <Link href={`/category/${doc.categorySlug}`} className="text-white/40 text-sm font-mono hover:text-white">
+            ← {doc.category.toUpperCase()}
+          </Link>
+          <h1 className="text-xl font-mono mt-3">{doc.name}</h1>
+          <p className="text-sm text-white/40 font-mono mt-1">
+            {doc.pages} PAGES • {doc.date} • {doc.type.toUpperCase()}
+          </p>
+        </div>
+
         <div className="flex flex-col lg:flex-row">
           {/* Document Preview */}
-          <div className="flex-1 p-6 border-b lg:border-b-0 lg:border-r border-gray-800">
-            <div className="bg-gray-900 rounded-lg p-8 min-h-96 flex items-center justify-center border border-gray-700">
-              <div className="text-center text-gray-500">
+          <div className="flex-1 p-6 border-b lg:border-b-0 lg:border-r border-white/10">
+            <div className="bg-white/5 border border-white/10 p-8 min-h-96 flex items-center justify-center">
+              <div className="text-center text-white/50">
                 <div className="text-6xl mb-4">📄</div>
-                <p className="text-lg">PDF Document Preview</p>
-                <p className="text-sm mt-2">Page 1 of {doc.pages}</p>
-                <button className="mt-6 bg-white text-black px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
-                  Open Full Document
+                <p className="font-mono">PDF DOCUMENT PREVIEW</p>
+                <p className="text-sm mt-2 font-mono">PAGE 1 OF {doc.pages}</p>
+                <button className="mt-6 bg-white text-[#0a1628] px-6 py-3 font-mono text-sm hover:bg-white/90 transition-colors">
+                  OPEN FULL DOCUMENT
                 </button>
-                <p className="text-xs text-gray-600 mt-4">Source: {doc.source}</p>
+                <p className="text-xs text-white/30 mt-4 font-mono">SOURCE: {doc.source}</p>
               </div>
             </div>
             <div className="flex justify-center gap-2 mt-4">
-              <button className="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700">← Previous</button>
-              <span className="px-4 py-2 text-gray-400">Page 1 of {doc.pages}</span>
-              <button className="bg-gray-800 px-4 py-2 rounded hover:bg-gray-700">Next →</button>
+              <button className="bg-white/5 border border-white/10 px-4 py-2 font-mono text-sm hover:border-white/30">← PREV</button>
+              <span className="px-4 py-2 text-white/40 font-mono text-sm">PAGE 1 OF {doc.pages}</span>
+              <button className="bg-white/5 border border-white/10 px-4 py-2 font-mono text-sm hover:border-white/30">NEXT →</button>
             </div>
           </div>
 
@@ -123,17 +126,17 @@ export default function DocumentPage({ params }) {
           <div className="w-full lg:w-96 p-6">
             {/* Tabs */}
             <div className="flex gap-2 mb-6">
-              {['context', 'people', 'news'].map((tab) => (
+              {['context', 'people'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
+                  className={`px-4 py-2 font-mono text-xs tracking-wide transition-colors ${
                     activeTab === tab
-                      ? 'bg-white text-black'
-                      : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+                      ? 'bg-white text-[#0a1628]'
+                      : 'bg-white/5 text-white/50 border border-white/10 hover:border-white/30'
                   }`}
                 >
-                  {tab}
+                  {tab.toUpperCase()}
                 </button>
               ))}
             </div>
@@ -141,32 +144,34 @@ export default function DocumentPage({ params }) {
             {/* Context Tab */}
             {activeTab === 'context' && (
               <div className="space-y-4">
-                <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
-                  <h3 className="font-semibold mb-2">Summary</h3>
-                  <p className="text-sm text-gray-400 leading-relaxed">{doc.summary}</p>
+                <div className="bg-white/5 border border-white/10 p-4">
+                  <h3 className="font-mono text-sm text-white/60 mb-2">SUMMARY</h3>
+                  <p className="text-sm text-white/80 leading-relaxed">{doc.summary}</p>
                 </div>
+                
                 {doc.keyDetails.length > 0 && (
-                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
-                    <h3 className="font-semibold mb-3">Key Details</h3>
+                  <div className="bg-white/5 border border-white/10 p-4">
+                    <h3 className="font-mono text-sm text-white/60 mb-3">KEY DETAILS</h3>
                     <div className="space-y-2">
                       {doc.keyDetails.map((detail, i) => (
-                        <div key={i} className="flex justify-between text-sm">
-                          <span className="text-gray-400">{detail.label}</span>
-                          <span className="text-white">{detail.value}</span>
+                        <div key={i} className="flex justify-between text-sm font-mono">
+                          <span className="text-white/40">{detail.label}</span>
+                          <span className="text-white/80">{detail.value}</span>
                         </div>
                       ))}
                     </div>
                   </div>
                 )}
+                
                 {doc.relatedDocs.length > 0 && (
-                  <div className="bg-gray-900 rounded-lg p-4 border border-gray-800">
-                    <h3 className="font-semibold mb-3">Related Documents</h3>
+                  <div className="bg-white/5 border border-white/10 p-4">
+                    <h3 className="font-mono text-sm text-white/60 mb-3">RELATED DOCUMENTS</h3>
                     <div className="space-y-2">
                       {doc.relatedDocs.map((related) => (
                         <Link
                           key={related.id}
                           href={`/document/${related.id}`}
-                          className="block text-sm text-blue-400 hover:underline"
+                          className="block text-sm text-white/70 hover:text-white font-mono"
                         >
                           {related.name} →
                         </Link>
@@ -183,42 +188,22 @@ export default function DocumentPage({ params }) {
                 {doc.people.length > 0 ? doc.people.map((person) => (
                   <Link
                     key={person.name}
-                    href={`/person/${person.name.toLowerCase().replace(/\s+/g, '-')}`}
-                    className="flex items-center justify-between bg-gray-900 rounded-lg p-3 border border-gray-800 hover:border-gray-600 transition-colors"
+                    href={`/person/${person.slug}`}
+                    className="flex items-center justify-between bg-white/5 border border-white/10 p-3 hover:border-white/30 transition-colors"
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center text-sm font-medium">
+                      <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-full flex items-center justify-center text-sm font-mono">
                         {person.name.split(' ').map(n => n[0]).join('')}
                       </div>
                       <div>
-                        <span className="text-sm font-medium">{person.name}</span>
-                        <p className="text-xs text-gray-500">{person.role}</p>
+                        <span className="text-sm font-mono">{person.name}</span>
+                        <p className="text-xs text-white/40 font-mono">{person.role}</p>
                       </div>
                     </div>
-                    <span className="text-gray-500">→</span>
+                    <span className="text-white/30">→</span>
                   </Link>
                 )) : (
-                  <p className="text-gray-500 text-sm">No people identified in this document yet.</p>
-                )}
-              </div>
-            )}
-
-            {/* News Tab */}
-            {activeTab === 'news' && (
-              <div className="space-y-3">
-                {doc.relatedNews.length > 0 ? doc.relatedNews.map((news, i) => (
-                  <a
-                    key={i}
-                    href={news.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="block bg-gray-900 rounded-lg p-4 border border-gray-800 hover:border-gray-600 transition-colors"
-                  >
-                    <p className="text-sm font-medium">{news.title}</p>
-                    <p className="text-xs text-gray-500 mt-1">{news.source} • {news.date}</p>
-                  </a>
-                )) : (
-                  <p className="text-gray-500 text-sm">No related news articles yet.</p>
+                  <p className="text-white/40 text-sm font-mono">No people identified yet.</p>
                 )}
               </div>
             )}
@@ -227,8 +212,13 @@ export default function DocumentPage({ params }) {
       </div>
 
       {/* Footer */}
-      <footer className="p-6 border-t border-gray-800 mt-8 text-center text-gray-500 text-sm">
-        <p>All documents sourced from <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">justice.gov/epstein</a></p>
+      <footer className="p-6 border-t border-white/10 mt-8 text-center">
+        <p className="text-xs font-mono text-white/30">
+          ALL DOCUMENTS SOURCED FROM{' '}
+          <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+            JUSTICE.GOV/EPSTEIN
+          </a>
+        </p>
       </footer>
     </main>
   )

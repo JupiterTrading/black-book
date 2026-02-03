@@ -1,12 +1,13 @@
 'use client'
 import Link from 'next/link'
+import Image from 'next/image'
 import { use } from 'react'
 
 const peopleData = {
   'jeffrey-epstein': {
     name: 'Jeffrey Epstein',
     status: 'Deceased',
-    statusColor: 'bg-gray-700 text-gray-300',
+    statusStyle: 'bg-white/10 text-white/50',
     documentCount: 1847,
     summary: 'American financier and convicted sex offender. Died in federal custody on August 10, 2019. Was awaiting trial on sex trafficking charges at the time of death. Previously convicted in 2008 of procuring a minor for prostitution.',
     tags: ['Flight Logs', 'Court Records', 'Financial', 'Primary Subject'],
@@ -17,15 +18,11 @@ const peopleData = {
       { id: 'cr-003', name: 'Palm Beach Police Report', type: 'Court Record', relevance: 'Primary subject' },
       { id: 'fin-001', name: 'Bank Account Summary - Deutsche Bank', type: 'Financial', relevance: 'Account holder' },
     ],
-    news: [
-      { title: 'DOJ releases new batch of Epstein documents', source: 'Reuters', date: 'Jan 2025' },
-      { title: 'Epstein Files Transparency Act documents now public', source: 'AP News', date: 'Dec 2024' },
-    ]
   },
   'ghislaine-maxwell': {
     name: 'Ghislaine Maxwell',
     status: 'Convicted',
-    statusColor: 'bg-red-900/50 text-red-300',
+    statusStyle: 'bg-red-500/20 text-red-300',
     documentCount: 243,
     summary: 'British socialite convicted of sex trafficking and other charges related to Jeffrey Epstein. Daughter of media proprietor Robert Maxwell. Was a close associate of Epstein from the early 1990s until his death.',
     tags: ['Flight Logs', 'Depositions', 'Court Records', 'Co-conspirator'],
@@ -35,15 +32,11 @@ const peopleData = {
       { id: 'cr-002', name: 'Virginia Giuffre vs. Maxwell Filing', type: 'Court Record', relevance: 'Defendant' },
       { id: 'cr-001', name: 'Deposition of Juan Alessi', type: 'Court Record', relevance: 'Named 47 times' },
     ],
-    news: [
-      { title: 'Maxwell appeals conviction citing jury misconduct', source: 'Reuters', date: 'Jan 2025' },
-      { title: 'Maxwell sentencing documents reveal new details', source: 'New York Times', date: 'Jun 2022' },
-    ]
   },
   'bill-clinton': {
     name: 'Bill Clinton',
-    status: 'Named in Documents',
-    statusColor: 'bg-yellow-900/50 text-yellow-300',
+    status: 'Named',
+    statusStyle: 'bg-yellow-500/20 text-yellow-300',
     documentCount: 23,
     summary: '42nd President of the United States. Appears in flight logs as a passenger on Epstein\'s aircraft. Clinton\'s office has stated he knew nothing of Epstein\'s crimes.',
     tags: ['Flight Logs'],
@@ -51,52 +44,83 @@ const peopleData = {
     documents: [
       { id: 'fl-001', name: 'Flight Log N908JE (2001-2003)', type: 'Flight Log', relevance: '26 flights' },
     ],
-    news: [
-      { title: 'Clinton releases statement on Epstein document release', source: 'CNN', date: 'Jan 2024' },
-    ]
+  },
+  'prince-andrew': {
+    name: 'Prince Andrew',
+    status: 'Named',
+    statusStyle: 'bg-yellow-500/20 text-yellow-300',
+    documentCount: 67,
+    summary: 'Duke of York, member of the British Royal Family. Named in various documents and settled a civil lawsuit with Virginia Giuffre in 2022.',
+    tags: ['Court Records', 'Depositions'],
+    legalStatus: 'Not criminally charged. Settled civil lawsuit with Virginia Giuffre in February 2022 for undisclosed sum.',
+    documents: [
+      { id: 'cr-002', name: 'Virginia Giuffre vs. Maxwell Filing', type: 'Court Record', relevance: 'Named' },
+    ],
+  },
+  'alan-dershowitz': {
+    name: 'Alan Dershowitz',
+    status: 'Named',
+    statusStyle: 'bg-yellow-500/20 text-yellow-300',
+    documentCount: 15,
+    summary: 'American lawyer and Harvard Law professor emeritus. Appears in flight logs and has been named in accusations which he denies.',
+    tags: ['Flight Logs', 'Legal Filings'],
+    legalStatus: 'Not charged with any crimes. Has denied all accusations and filed counter-suits.',
+    documents: [
+      { id: 'fl-001', name: 'Flight Log N908JE (2001-2003)', type: 'Flight Log', relevance: '11 flights' },
+    ],
   }
 }
 
 const defaultPerson = {
   name: 'Unknown Person',
   status: 'Unknown',
-  statusColor: 'bg-gray-700 text-gray-300',
+  statusStyle: 'bg-white/10 text-white/50',
   documentCount: 0,
   summary: 'Information about this individual is being compiled.',
   tags: [],
   legalStatus: 'No legal status information available.',
   documents: [],
-  news: []
 }
 
 export default function PersonPage({ params }) {
   const { slug } = use(params)
-  const person = peopleData[slug] || { ...defaultPerson, name: slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) }
+  const person = peopleData[slug] || { 
+    ...defaultPerson, 
+    name: slug.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()) 
+  }
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-[#0a1628] text-white">
       {/* Header */}
-      <header className="border-b border-gray-800 p-6">
-        <div className="max-w-4xl mx-auto">
-          <Link href="/" className="text-gray-400 text-sm hover:text-white">← Back to home</Link>
+      <header className="border-b border-white/10 p-6 bg-[#0a1628]/90 backdrop-blur-sm sticky top-0 z-30">
+        <div className="max-w-4xl mx-auto flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-6 h-8 relative">
+              <Image src="/hourglass-static.png" alt="Logo" fill className="object-contain" unoptimized />
+            </div>
+            <span className="font-mono text-sm text-white/50">THE BLACK BOOK</span>
+          </Link>
         </div>
       </header>
 
       <div className="max-w-4xl mx-auto p-6">
+        {/* Back Link */}
+        <Link href="/people" className="text-white/40 text-sm font-mono hover:text-white">← PEOPLE INDEX</Link>
+
         {/* Profile Header */}
-        <div className="flex items-start gap-4 mb-6">
-          <div className="w-20 h-20 bg-gray-700 rounded-full flex items-center justify-center text-3xl font-medium">
+        <div className="flex items-start gap-4 mt-6 mb-8">
+          <div className="w-20 h-20 bg-white/10 border border-white/20 rounded-full flex items-center justify-center text-2xl font-mono">
             {person.name.split(' ').map(n => n[0]).join('')}
           </div>
           <div className="flex-1">
-            <h1 className="text-3xl font-bold">{person.name}</h1>
-            <p className="text-gray-400 mt-1">Appears in {person.documentCount} documents</p>
+            <h1 className="text-2xl font-mono">{person.name.toUpperCase()}</h1>
+            <p className="text-white/40 font-mono text-sm mt-1">{person.documentCount} DOCUMENTS</p>
             <div className="flex flex-wrap gap-2 mt-3">
-              <span className={`px-3 py-1 rounded-full text-sm ${person.statusColor}`}>
-                {person.status}
+              <span className={`px-3 py-1 text-xs font-mono ${person.statusStyle}`}>
+                {person.status.toUpperCase()}
               </span>
               {person.tags.map((tag) => (
-                <span key={tag} className="bg-gray-800 px-3 py-1 rounded-full text-sm text-gray-300">
+                <span key={tag} className="bg-white/5 border border-white/10 px-3 py-1 text-xs font-mono text-white/50">
                   {tag}
                 </span>
               ))}
@@ -104,55 +128,47 @@ export default function PersonPage({ params }) {
           </div>
         </div>
 
-        {/* Summary */}
-        <div className="bg-gray-900 rounded-lg p-5 border border-gray-800 mb-6">
-          <h3 className="font-semibold mb-2">Overview</h3>
-          <p className="text-gray-400 leading-relaxed">{person.summary}</p>
+        {/* Overview */}
+        <div className="bg-white/5 border border-white/10 p-5 mb-6">
+          <h3 className="font-mono text-sm text-white/60 mb-2">OVERVIEW</h3>
+          <p className="text-white/80 leading-relaxed">{person.summary}</p>
         </div>
 
         {/* Legal Status */}
-        <div className="bg-gray-900 rounded-lg p-5 border border-gray-800 mb-6">
-          <h3 className="font-semibold mb-2">Legal Status</h3>
-          <p className="text-gray-400 leading-relaxed">{person.legalStatus}</p>
+        <div className="bg-white/5 border border-white/10 p-5 mb-8">
+          <h3 className="font-mono text-sm text-white/60 mb-2">LEGAL STATUS</h3>
+          <p className="text-white/80 leading-relaxed">{person.legalStatus}</p>
         </div>
 
         {/* Documents */}
-        <h3 className="font-semibold mb-4">Documents Mentioning This Person</h3>
-        <div className="space-y-3 mb-8">
+        <h3 className="font-mono text-sm text-white/60 mb-4">DOCUMENTS MENTIONING THIS PERSON</h3>
+        <div className="space-y-2 mb-8">
           {person.documents.length > 0 ? person.documents.map((doc) => (
             <Link
               key={doc.id}
               href={`/document/${doc.id}`}
-              className="flex items-center justify-between bg-gray-900 border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-colors"
+              className="flex items-center justify-between bg-white/5 border border-white/10 p-4 hover:border-white/30 hover:bg-white/10 transition-all"
             >
               <div>
-                <h4 className="font-medium">{doc.name}</h4>
-                <p className="text-sm text-gray-500 mt-1">{doc.type} • {doc.relevance}</p>
+                <h4 className="font-mono">{doc.name}</h4>
+                <p className="text-sm text-white/40 font-mono mt-1">{doc.type} • {doc.relevance}</p>
               </div>
-              <span className="text-gray-500">→</span>
+              <span className="text-white/30">→</span>
             </Link>
           )) : (
-            <p className="text-gray-500">No documents linked yet.</p>
-          )}
-        </div>
-
-        {/* Related News */}
-        <h3 className="font-semibold mb-4">Related News</h3>
-        <div className="space-y-3">
-          {person.news.length > 0 ? person.news.map((article, i) => (
-            <div key={i} className="bg-gray-900 rounded-lg p-4 border border-gray-800">
-              <p className="font-medium">{article.title}</p>
-              <p className="text-sm text-gray-500 mt-1">{article.source} • {article.date}</p>
-            </div>
-          )) : (
-            <p className="text-gray-500">No related news articles.</p>
+            <p className="text-white/40 font-mono">No documents linked yet.</p>
           )}
         </div>
       </div>
 
       {/* Footer */}
-      <footer className="p-6 border-t border-gray-800 mt-12 text-center text-gray-500 text-sm">
-        <p>All documents sourced from <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">justice.gov/epstein</a></p>
+      <footer className="p-6 border-t border-white/10 mt-12 text-center">
+        <p className="text-xs font-mono text-white/30">
+          ALL DOCUMENTS SOURCED FROM{' '}
+          <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+            JUSTICE.GOV/EPSTEIN
+          </a>
+        </p>
       </footer>
     </main>
   )

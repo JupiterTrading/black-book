@@ -2,8 +2,9 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 
-// Mock search database
+// Mock search database - will be replaced with real data
 const searchDatabase = {
   documents: [
     { id: 'cr-001', name: 'Deposition of Juan Alessi', type: 'Court Record', date: '2009', keywords: ['alessi', 'deposition', 'palm beach', 'house manager', 'epstein', 'maxwell'] },
@@ -18,17 +19,13 @@ const searchDatabase = {
     { slug: 'ghislaine-maxwell', name: 'Ghislaine Maxwell', detail: 'Appears in 243 documents', keywords: ['ghislaine', 'maxwell'] },
     { slug: 'bill-clinton', name: 'Bill Clinton', detail: 'Appears in 23 documents', keywords: ['bill', 'clinton', 'president'] },
     { slug: 'alan-dershowitz', name: 'Alan Dershowitz', detail: 'Appears in 15 documents', keywords: ['alan', 'dershowitz', 'lawyer'] },
+    { slug: 'prince-andrew', name: 'Prince Andrew', detail: 'Appears in 67 documents', keywords: ['prince', 'andrew', 'royal'] },
   ],
-  news: [
-    { title: 'DOJ releases new Epstein documents', source: 'Reuters', date: 'Jan 2025', keywords: ['doj', 'release', 'documents', 'epstein'] },
-    { title: 'Maxwell appeals conviction', source: 'New York Times', date: 'Jan 2025', keywords: ['maxwell', 'appeal', 'conviction'] },
-    { title: 'Flight logs reveal travel patterns', source: 'Washington Post', date: 'Dec 2024', keywords: ['flight', 'logs', 'travel', 'patterns'] },
-  ]
 }
 
 function search(query) {
   const q = query.toLowerCase().trim()
-  if (!q) return { documents: [], people: [], news: [] }
+  if (!q) return { documents: [], people: [] }
 
   const matchScore = (keywords) => {
     return keywords.filter(k => k.includes(q) || q.includes(k)).length
@@ -37,7 +34,6 @@ function search(query) {
   return {
     documents: searchDatabase.documents.filter(d => matchScore(d.keywords) > 0 || d.name.toLowerCase().includes(q)),
     people: searchDatabase.people.filter(p => matchScore(p.keywords) > 0 || p.name.toLowerCase().includes(q)),
-    news: searchDatabase.news.filter(n => matchScore(n.keywords) > 0 || n.title.toLowerCase().includes(q)),
   }
 }
 
@@ -46,88 +42,94 @@ function SearchContent() {
   const initialQuery = searchParams.get('q') || ''
   const [query, setQuery] = useState(initialQuery)
   const [filter, setFilter] = useState('all')
-  const [results, setResults] = useState({ documents: [], people: [], news: [] })
+  const [results, setResults] = useState({ documents: [], people: [] })
 
   useEffect(() => {
     setResults(search(query))
   }, [query])
 
-  const totalResults = results.documents.length + results.people.length + results.news.length
+  const totalResults = results.documents.length + results.people.length
 
   const filteredResults = {
     documents: filter === 'all' || filter === 'documents' ? results.documents : [],
     people: filter === 'all' || filter === 'people' ? results.people : [],
-    news: filter === 'all' || filter === 'news' ? results.news : [],
   }
 
   return (
-    <main className="min-h-screen bg-black text-white">
+    <main className="min-h-screen bg-[#0a1628] text-white">
       {/* Header */}
-      <header className="border-b border-gray-800 p-6">
-        <div className="max-w-4xl mx-auto">
-          <Link href="/" className="text-gray-400 text-sm hover:text-white">← Back to home</Link>
-          <h1 className="text-2xl font-bold mt-4 mb-4">Search</h1>
+      <header className="border-b border-white/10 p-6 bg-[#0a1628]/90 backdrop-blur-sm sticky top-0 z-30">
+        <div className="max-w-4xl mx-auto flex items-center gap-4">
+          <Link href="/" className="flex items-center gap-3">
+            <div className="w-6 h-8 relative">
+              <Image src="/hourglass-static.png" alt="Logo" fill className="object-contain" unoptimized />
+            </div>
+            <span className="font-mono text-sm text-white/50">THE BLACK BOOK</span>
+          </Link>
+        </div>
+      </header>
 
-          {/* Search Input */}
+      <div className="max-w-4xl mx-auto p-6">
+        <h1 className="text-2xl font-mono tracking-wide mb-6">SEARCH</h1>
+
+        {/* Search Input */}
+        <div className="relative mb-6">
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Search documents, names, dates..."
-            className="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:border-gray-500"
+            className="w-full bg-white/5 border border-white/20 px-6 py-4 text-white placeholder-white/30 focus:outline-none focus:border-white/50 transition-colors font-mono"
             autoFocus
           />
-
-          {/* Filter Tabs */}
-          <div className="flex gap-2 mt-4">
-            {[
-              { key: 'all', label: 'All' },
-              { key: 'documents', label: 'Documents' },
-              { key: 'people', label: 'People' },
-              { key: 'news', label: 'News' },
-            ].map((f) => (
-              <button
-                key={f.key}
-                onClick={() => setFilter(f.key)}
-                className={`px-4 py-2 rounded-full text-sm transition-colors ${
-                  filter === f.key
-                    ? 'bg-white text-black'
-                    : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
-                }`}
-              >
-                {f.label}
-              </button>
-            ))}
-          </div>
         </div>
-      </header>
 
-      <div className="max-w-4xl mx-auto p-6">
+        {/* Filter Tabs */}
+        <div className="flex gap-2 mb-8">
+          {[
+            { key: 'all', label: 'ALL' },
+            { key: 'documents', label: 'DOCUMENTS' },
+            { key: 'people', label: 'PEOPLE' },
+          ].map((f) => (
+            <button
+              key={f.key}
+              onClick={() => setFilter(f.key)}
+              className={`px-4 py-2 font-mono text-xs tracking-wide transition-colors ${
+                filter === f.key
+                  ? 'bg-white text-[#0a1628]'
+                  : 'bg-white/5 text-white/50 border border-white/10 hover:border-white/30'
+              }`}
+            >
+              {f.label}
+            </button>
+          ))}
+        </div>
+
         {query && (
-          <p className="text-gray-400 text-sm mb-6">
-            {totalResults} result{totalResults !== 1 ? 's' : ''} for "{query}"
+          <p className="text-white/30 text-sm font-mono mb-6">
+            {totalResults} RESULT{totalResults !== 1 ? 'S' : ''} FOR "{query.toUpperCase()}"
           </p>
         )}
 
         {/* People Results */}
         {filteredResults.people.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-sm uppercase tracking-wider text-gray-500 mb-3">People</h2>
+            <h2 className="text-xs font-mono tracking-widest text-white/30 mb-4">PEOPLE</h2>
             <div className="space-y-2">
               {filteredResults.people.map((person) => (
                 <Link
                   key={person.slug}
                   href={`/person/${person.slug}`}
-                  className="flex items-center gap-4 bg-gray-900 border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-colors"
+                  className="flex items-center gap-4 bg-white/5 border border-white/10 p-4 hover:border-white/30 hover:bg-white/10 transition-all"
                 >
-                  <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center">
-                    👤
+                  <div className="w-10 h-10 bg-white/10 border border-white/20 rounded-full flex items-center justify-center font-mono">
+                    {person.name.split(' ').map(n => n[0]).join('')}
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium">{person.name}</h3>
-                    <p className="text-sm text-gray-400">{person.detail}</p>
+                    <h3 className="font-mono">{person.name}</h3>
+                    <p className="text-sm text-white/40 font-mono">{person.detail}</p>
                   </div>
-                  <span className="text-gray-500">→</span>
+                  <span className="text-white/30">→</span>
                 </Link>
               ))}
             </div>
@@ -137,46 +139,23 @@ function SearchContent() {
         {/* Document Results */}
         {filteredResults.documents.length > 0 && (
           <div className="mb-8">
-            <h2 className="text-sm uppercase tracking-wider text-gray-500 mb-3">Documents</h2>
+            <h2 className="text-xs font-mono tracking-widest text-white/30 mb-4">DOCUMENTS</h2>
             <div className="space-y-2">
               {filteredResults.documents.map((doc) => (
                 <Link
                   key={doc.id}
                   href={`/document/${doc.id}`}
-                  className="flex items-center gap-4 bg-gray-900 border border-gray-800 rounded-lg p-4 hover:border-gray-600 transition-colors"
+                  className="flex items-center gap-4 bg-white/5 border border-white/10 p-4 hover:border-white/30 hover:bg-white/10 transition-all"
                 >
-                  <div className="w-10 h-10 bg-gray-700 rounded-full flex items-center justify-center">
+                  <div className="w-10 h-10 bg-white/5 border border-white/20 flex items-center justify-center text-lg">
                     📄
                   </div>
                   <div className="flex-1">
-                    <h3 className="font-medium">{doc.name}</h3>
-                    <p className="text-sm text-gray-400">{doc.type} • {doc.date}</p>
+                    <h3 className="font-mono">{doc.name}</h3>
+                    <p className="text-sm text-white/40 font-mono">{doc.type} • {doc.date}</p>
                   </div>
-                  <span className="text-gray-500">→</span>
+                  <span className="text-white/30">→</span>
                 </Link>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* News Results */}
-        {filteredResults.news.length > 0 && (
-          <div className="mb-8">
-            <h2 className="text-sm uppercase tracking-wider text-gray-500 mb-3">News</h2>
-            <div className="space-y-2">
-              {filteredResults.news.map((article, i) => (
-                <div
-                  key={i}
-                  className="flex items-center gap-4 bg-gray-900 border border-gray-800 rounded-lg p-4"
-                >
-                  <div className="w-10 h-10 bg-green-900 rounded-full flex items-center justify-center">
-                    📰
-                  </div>
-                  <div className="flex-1">
-                    <h3 className="font-medium">{article.title}</h3>
-                    <p className="text-sm text-gray-400">{article.source} • {article.date}</p>
-                  </div>
-                </div>
               ))}
             </div>
           </div>
@@ -185,22 +164,28 @@ function SearchContent() {
         {/* No Results */}
         {query && totalResults === 0 && (
           <div className="text-center py-12">
-            <p className="text-gray-400">No results found for "{query}"</p>
-            <p className="text-gray-500 text-sm mt-2">Try a different search term</p>
+            <p className="text-white/40 font-mono">NO RESULTS FOUND FOR "{query.toUpperCase()}"</p>
+            <p className="text-white/20 text-sm font-mono mt-2">Try a different search term</p>
           </div>
         )}
 
         {/* Empty State */}
         {!query && (
           <div className="text-center py-12">
-            <p className="text-gray-400">Enter a search term to find documents, people, and news</p>
+            <p className="text-white/40 font-mono">ENTER A SEARCH TERM</p>
+            <p className="text-white/20 text-sm font-mono mt-2">Search documents, names, and dates</p>
           </div>
         )}
       </div>
 
       {/* Footer */}
-      <footer className="p-6 border-t border-gray-800 mt-8 text-center text-gray-500 text-sm">
-        <p>All documents sourced from <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white">justice.gov/epstein</a></p>
+      <footer className="p-6 border-t border-white/10 mt-8 text-center">
+        <p className="text-xs font-mono text-white/30">
+          ALL DOCUMENTS SOURCED FROM{' '}
+          <a href="https://www.justice.gov/epstein" target="_blank" rel="noopener noreferrer" className="underline hover:text-white transition-colors">
+            JUSTICE.GOV/EPSTEIN
+          </a>
+        </p>
       </footer>
     </main>
   )
@@ -209,8 +194,8 @@ function SearchContent() {
 export default function SearchPage() {
   return (
     <Suspense fallback={
-      <main className="min-h-screen bg-black text-white flex items-center justify-center">
-        <p className="text-gray-400">Loading search...</p>
+      <main className="min-h-screen bg-[#0a1628] text-white flex items-center justify-center">
+        <p className="text-white/40 font-mono">LOADING...</p>
       </main>
     }>
       <SearchContent />
